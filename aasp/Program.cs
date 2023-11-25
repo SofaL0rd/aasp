@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -9,43 +7,34 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Додайте конфігурацію
-        builder.Configuration
-            .AddJsonFile("companyConfig.json")
-            .AddXmlFile("companyConfig.xml")
-            .AddIniFile("companyConfig.ini")
-            .AddJsonFile("myInfoConfig.json");
-
-        // Додайте сервіси
-        builder.Services.AddSingleton<CompanyService>();
-
+        builder.Services.AddSingleton<CalcService>();
+        builder.Services.AddTransient<ITimeOfDayService, TimeOfDayService>();
+        builder.Services.AddControllers();
         var app = builder.Build();
 
-        // Виведіть дані про компанії в консоль та в браузер
-        var companyService = app.Services.GetRequiredService<CompanyService>();
-        companyService.DisplayMostEmployedCompany();
-
-        // Виведіть дані про вас у вікно браузера
+        
         app.Map("/", () =>
         {
-            var myInfo = builder.Configuration.GetSection("MyInfo").Get<MyInfo>();
-            var company = companyService.GetMostEmployedCompany();
+            var calcService = app.Services.GetRequiredService<CalcService>();
 
-            return "My Information:" +
-                   $" Name: {myInfo.Name}" +
-                   $" Age: {myInfo.Age}" +
-                   $" Occupation: {myInfo.Occupation}" +
-                   $" Most Employed Company" +
-                   $" Name: {company.Name}" +
-                   $" Employees: {company.Employees}";
+            return $"Add: {calcService.Add(5, 3)} \n" +
+                   $"Subtract: {calcService.Subtract(8, 2)}\n" +
+                   $"Multiply: {calcService.Multiply(4, 6)}\n" +
+                  $"Divide: {calcService.Divide(9, 3)} \n";
         });
 
+        app.Map("/time", appBuilder =>
+        {
+            appBuilder.Run(async context =>
+            {
+                var timeOfDayService = context.RequestServices.GetRequiredService<ITimeOfDayService>();
+                var result = timeOfDayService.GetTimeOfDay();
+                await context.Response.WriteAsync(result);
+            });
+        });
         app.Run();
     }
+
+    
 }
-
-
-
-
 
