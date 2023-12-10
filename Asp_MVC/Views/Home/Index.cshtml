@@ -1,0 +1,22 @@
+﻿@model Product
+
+@{
+    ViewBag.Title = "Add products";
+}
+
+<h2>Add Products</h2>
+<form method="post" asp-action="AddProduct" class="form">
+    <div >
+        <input type="text" asp-for="Name" placeholder="Name of Product" required>
+    </div>
+    <div >
+        <input type="number" asp-for="Price" min="1" placeholder="Price" required>
+    </div>
+    <button type="submit" >Add Product</button>
+</form>
+
+<style>
+    div{
+        margin: 10px 5px;
+    }
+</style>

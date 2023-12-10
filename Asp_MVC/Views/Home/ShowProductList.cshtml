@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "List of Products";
+}
+﻿@using ASp_MVC.ViewModels
+@model ShowProductsViewModel
+
+<h2 >Products List</h2>
+
+@if(Model.Products.Count() > 0)
+{
+    <ul >
+        @foreach (var product in Model.Products)
+        {
+            <li >@product.Id. @product.Name - $@product.Price (@product.CreatedDate)</li>
+        }
+    </ul>
+}
+else
+{
+    <p>
+        Its seems that there no product. Add some products <a asp-area="" asp-controller="Home" asp-action="Index">here</a></p>
+}
