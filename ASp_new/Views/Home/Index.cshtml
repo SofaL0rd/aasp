@@ -1,0 +1,45 @@
+﻿﻿@using ASp_new.ViewModels
+@model IndexViewModel
+
+
+<body>
+    <nav >
+        <form method="post" asp-action="Register" asp-controller="Home">
+            <button type="submit">Add User</button>
+        </form>
+    </nav>
+
+    <main >
+       
+
+        <section>
+            <table >
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.Id</td>
+                            <td>@user.Name</td>
+                            <td>@user.Age</td>
+                            <td>
+                                <form method="post" asp-action="ShowProducts" asp-controller="Home">
+                                    <input type="hidden" name="Id" value="@user.Id" />
+                                    <button type="submit">Show Products</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+</body>
