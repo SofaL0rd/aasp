@@ -1,0 +1,19 @@
+﻿@model Coord
+@{
+    var weather = await Component.InvokeAsync("Weather", Model);
+
+}
+
+
+<h2 >Set coordinates of wanted location</h2>
+<form method="post" asp-action="SetLocCoords" >
+    <div>
+        <input asp-for="latitude" type="number" placeholder="Latitude" id="latitude" name="latitude" min="-90" max="90" step="any" placeholder="Enter latitude" value="@Model.latitude" required>
+    </div>
+    <div>
+        <input asp-for="longitude" type="number" placeholder="Longitude" id="longitude" name="longitude" min="-180" max="180" step="any" placeholder="Enter longitude" value="@Model.longitude" required>
+    </div>
+    <button type="submit">Show Weather</button>
+</form>
+
+@weather
