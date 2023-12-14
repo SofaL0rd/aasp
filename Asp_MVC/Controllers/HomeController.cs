@@ -1,70 +1,65 @@
 ﻿using ASp_MVC.Models;
 using ASp_MVC.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
 using System.Globalization;
 
 namespace ASp_MVC.Controllers
 {
      public class HomeController : Controller
-    {
-        static int _productId = 1;
-        private static readonly List<Product> _products = new();
-        private static Coord _coord = new();
+    {       
+        static int  _consultId = 1;
+        private static readonly List<Consult> _consults = new();
+        private static readonly List<string> _subjects = new List<string> { "JavaScript", "C#", "Java", "Python", "Основи" };
 
         public ActionResult Index()
         {
+            ViewBag.Subjects = new SelectList(_subjects);
             return View();
         }
 
         [HttpPost]
-        public ActionResult AddProduct(Product product)
+        public IActionResult Register(Consult consult)
         {
-            
-                product.Id = _productId;
-                _products.Add(product);
-                _productId++;
+            if (ModelState.IsValid)
+            {
+                if (consult.Subject == "Основи" && consult.Date.DayOfWeek == DayOfWeek.Monday)
+                {
+                    ModelState.AddModelError("DateOfConsultation", "Консультація щодо 'Основи' не може проходити по понеділках.");
+                    ViewBag.Subjects = new SelectList(_subjects);
+                    return View("Index", consult);
+                }
+
+                consult.Id = _consultId;
+                _consults.Add(consult);
+                _consultId++;
 
                 ModelState.Clear();
 
-
-                return View("Index");
-           
-
-        }
-
-        public ActionResult ShowProductList()
-        {
-            ShowProductsViewModel showProductsViewModel = new(_products);
-            return View("ShowProductList", showProductsViewModel);
-        }
-
-        public ActionResult ShowProductTable() 
-        {
-            ShowProductsViewModel showProductsViewModel = new(_products);
-            return View("ShowProductTable",showProductsViewModel);
-        }
-
-
-        [HttpPost]
-        public ActionResult SetLocCoords(string latitude, string longitude)
-        {
-            if (Double.TryParse(latitude, NumberStyles.Float, CultureInfo.InvariantCulture, out double numLat) && Double.TryParse(longitude, NumberStyles.Float, CultureInfo.InvariantCulture, out double numLon))
-            {
-                _coord.latitude = numLat;
-                _coord.longitude = numLat;
+                return RedirectToAction("Index");
             }
             else
             {
-                throw new Exception();
+                foreach (var key in ModelState.Keys)
+                {
+                    for (int i = 0; i < ModelState[key].Errors.Count; i++)
+                    {
+                        var error = ModelState[key].Errors[i];
+                        ModelState.AddModelError(key, error.ErrorMessage);
+                    }
+                }
+
+                ViewBag.Subjects = new SelectList(_subjects);
+                return View("Index", consult);
             }
-            return RedirectToAction("ShowWeather");
         }
 
-        [HttpGet]
-        public ActionResult ShowWeather()
+        public IActionResult ShowConsults()
         {
-            return View(_coord);
+            ShowConsultsViewModel showConsultsViewModel = new(_consults);
+            return View(showConsultsViewModel);
         }
+
     }
 }

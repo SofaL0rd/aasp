@@ -1,9 +1,7 @@
-using ASp_MVC.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
-    .AddTransient<IWeatherService,WeatherService>()
     .AddHttpClient()
     .AddControllersWithViews();
 

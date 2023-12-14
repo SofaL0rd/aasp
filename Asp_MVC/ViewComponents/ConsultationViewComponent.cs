@@ -7,11 +7,11 @@ using System.Text;
 
 namespace ASp_MVC.ViewComponents
 {
-    public class ProductTableViewComponent : ViewComponent
+    public class ConsultationViewComponent : ViewComponent
     {
-        public IViewComponentResult Invoke(List<Product> products)
+        public IViewComponentResult Invoke(List<Consult> consults)
         {
-            return View(products);
+            return View(consults);
         }
     }
 }
